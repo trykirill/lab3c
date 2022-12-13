@@ -103,6 +103,30 @@ TEST(my_queue_lib, Test_Queue_000){//insert
 
 }
 
+TEST(my_queue_lib, Test_Queue_001){
+	Item item;
+	Queue queue1(5);
+	queue1 << item1;
+	queue1 << item3;
+	queue1 << item5;
+
+	ASSERT_TRUE(!(queue1 >> item) and item == item1);
+	ASSERT_TRUE(!(queue1 >> item) and item == item3);
+	ASSERT_TRUE(!(queue1 >> item) and item == item5);
+	ASSERT_TRUE(queue1 >> item);
+	ASSERT_EQ(queue1.dnumber(), 0);
+
+	Queue queue2(4);
+	queue2 << item2;
+	queue2 << item4;
+
+	ASSERT_TRUE(!(queue2 >> item) and item == item2);
+	ASSERT_TRUE(!(queue2 >> item) and item == item4);
+	ASSERT_TRUE(queue2 >> item);
+
+	ASSERT_EQ(queue2.dnumber(), 0);
+
+}	
 TEST(my_queue_lib, Test_Queue_002){//~
 	Queue queue1(3);
 	queue1 << item1;
