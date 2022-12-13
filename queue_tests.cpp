@@ -84,11 +84,23 @@ TEST(my_queue_lib, Test_Queue_000){//insert
 	ASSERT_EQ(queue1 << item3, 0);
 	ASSERT_EQ(queue1 << item4, 1);
 
-	Item *arr = queue1.darr();
-	ASSERT_TRUE(arr[0] == item1);
-	ASSERT_TRUE(arr[1] == item2);
-	ASSERT_TRUE(arr[1] == item2);
+	Item *arr1 = queue1.darr();
+	ASSERT_TRUE(arr1[0] == item1);
+	ASSERT_TRUE(arr1[1] == item2);
+	ASSERT_TRUE(arr1[2] == item3);
 	ASSERT_EQ(queue1.dnumber(), 3);
+
+	Queue queue2(2);
+	ASSERT_EQ(queue2 << item1, 0);
+	ASSERT_EQ(queue2 << item3, 0);
+	ASSERT_EQ(queue2 << item5, 1);
+
+	Item *arr2 = queue2.darr();
+	ASSERT_TRUE(arr2[0] == item1);
+	ASSERT_TRUE(arr2[1] == item3);
+	ASSERT_EQ(queue2.dnumber(), 2);
+
+
 }
 
 TEST(my_queue_lib, Test_Queue_002){//~
