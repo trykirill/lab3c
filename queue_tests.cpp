@@ -77,38 +77,190 @@ Item item3(3, "third");
 Item item4(4, "fourth");
 Item item5(5, "fifth");
 
-TEST(my_queue_lib, Test_Queue_000){
-	Queue queue;
+TEST(my_queue_lib, Test_Queue_000){//insert
+	Queue queue1(3);
+	ASSERT_EQ(queue1 << item1, 0);
+	ASSERT_EQ(queue1 << item2, 0);
+	ASSERT_EQ(queue1 << item3, 0);
+	ASSERT_EQ(queue1 << item4, 1);
 
-	ASSERT_FALSE(queue << item1);
-	ASSERT_FALSE(queue << item2);
-	ASSERT_FALSE(queue << item3);
-	ASSERT_FALSE(queue << item4);
-	ASSERT_TRUE(queue << item5);
+	Item *arr = queue1.darr();
+	ASSERT_TRUE(arr[0] == item1);
+	ASSERT_TRUE(arr[1] == item2);
+	ASSERT_TRUE(arr[1] == item2);
+	ASSERT_EQ(queue1.dnumber(), 3);
 }
 
-TEST(my_queue_lib, Test_Queue_001){
-	Queue queue(item1, item2, item3, item4);
-	Item item;
-
-	ASSERT_TRUE(!(queue >> item) and item == item1);
-	ASSERT_TRUE(!(queue >> item) and item == item2);
-	ASSERT_TRUE(!(queue >> item) and item == item3);
-	ASSERT_TRUE(!(queue >> item) and item == item4);
-	ASSERT_TRUE(queue >> item);
+TEST(my_queue_lib, Test_Queue_002){//~
+	Queue queue1(3);
+	queue1 << item1;
+	queue1 << item2;
+	
+	queue1.destroy();
+	ASSERT_EQ(queue1.dnumber(), 0);
+	ASSERT_EQ(queue1.dsize(), 0);
+	ASSERT_EQ(queue1.dtail(), 0);
+	ASSERT_EQ(queue1.dhead(), 0);
+	ASSERT_EQ(queue1.darr(), nullptr);
 }
 
-TEST(my_queue_lib, Test_Queue_002){
+TEST(my_queue_lib, Test_Queue_003){//конструктор перемещение
+	Queue const_queue1(5);
+	const_queue1 << item1;
+	const_queue1 << item3;
+	const_queue1 << item5;
+	Queue queue1(move(const_queue1));
+	
+	ASSERT_EQ(queue1.dnumber(), 3);
+	ASSERT_EQ(queue1.dsize(), 5);
+	ASSERT_EQ(queue1.dtail(), 3);
+	ASSERT_EQ(queue1.dhead(), 0);
+	ASSERT_EQ((queue1.darr())[0].double_val, item1.double_val);
+	ASSERT_EQ((queue1.darr())[0].string_val, item1.string_val);
+	ASSERT_EQ((queue1.darr())[1].double_val, item3.double_val);
+	ASSERT_EQ((queue1.darr())[1].string_val, item3.string_val);
+	ASSERT_EQ((queue1.darr())[2].double_val, item5.double_val);
+	ASSERT_EQ((queue1.darr())[2].string_val, item5.string_val);
+
+	ASSERT_EQ(const_queue1.dnumber(), 0);
+	ASSERT_EQ(const_queue1.dsize(), 0);
+	ASSERT_EQ(const_queue1.dtail(), 0);
+	ASSERT_EQ(const_queue1.dhead(), 0);
+	ASSERT_EQ(const_queue1.darr(), nullptr);
+	
+	Queue const_queue2(4);
+	const_queue2 << item2;
+	const_queue2 << item4;
+	Queue queue2(move(const_queue2));
+	
+	ASSERT_EQ(queue2.dnumber(), 2);
+	ASSERT_EQ(queue2.dsize(), 4);
+	ASSERT_EQ(queue2.dtail(), 2);
+	ASSERT_EQ(queue2.dhead(), 0);
+	ASSERT_EQ((queue2.darr())[0].double_val, item2.double_val);
+	ASSERT_EQ((queue2.darr())[0].string_val, item2.string_val);
+	ASSERT_EQ((queue2.darr())[1].double_val, item4.double_val);
+	ASSERT_EQ((queue2.darr())[1].string_val, item4.string_val);	
+
+	ASSERT_EQ(const_queue2.dnumber(), 0);
+	ASSERT_EQ(const_queue2.dsize(), 0);
+	ASSERT_EQ(const_queue2.dtail(), 0);
+	ASSERT_EQ(const_queue2.dhead(), 0);
+	ASSERT_EQ(const_queue2.darr(), nullptr);	
+}
+
+TEST(my_queue_lib, Test_Queue_004){//конструктор копирования
+	Queue const_queue1(5);
+	const_queue1 << item1;
+	const_queue1 << item3;
+	const_queue1 << item5;
+	Queue queue1(const_queue1);
+	
+	ASSERT_EQ(queue1.dnumber(), 3);
+	ASSERT_EQ(queue1.dsize(), 5);
+	ASSERT_EQ(queue1.dtail(), 3);
+	ASSERT_EQ(queue1.dhead(), 0);
+	ASSERT_EQ((queue1.darr())[0].double_val, item1.double_val);
+	ASSERT_EQ((queue1.darr())[0].string_val, item1.string_val);
+	ASSERT_EQ((queue1.darr())[1].double_val, item3.double_val);
+	ASSERT_EQ((queue1.darr())[1].string_val, item3.string_val);
+	ASSERT_EQ((queue1.darr())[2].double_val, item5.double_val);
+	ASSERT_EQ((queue1.darr())[2].string_val, item5.string_val);
+	
+	Queue const_queue2(4);
+	const_queue2 << item2;
+	const_queue2 << item4;
+	Queue queue2(const_queue2);
+	
+	ASSERT_EQ(queue2.dnumber(), 2);
+	ASSERT_EQ(queue2.dsize(), 4);
+	ASSERT_EQ(queue2.dtail(), 2);
+	ASSERT_EQ(queue2.dhead(), 0);
+	ASSERT_EQ((queue2.darr())[0].double_val, item2.double_val);
+	ASSERT_EQ((queue2.darr())[0].string_val, item2.string_val);
+	ASSERT_EQ((queue2.darr())[1].double_val, item4.double_val);
+	ASSERT_EQ((queue2.darr())[1].string_val, item4.string_val);
+}
+
+TEST(my_queue_lib, Test_Queue_005){//оператор копирование
+	Queue const_queue1(5);
+	const_queue1 << item1;
+	const_queue1 << item3;
+	const_queue1 << item5;
 	Queue queue1;
-	Queue queue2(item1);
-	Queue queue3(item1, item2, item3, item4);
-
-	ASSERT_EQ(!queue1, 1);
-	ASSERT_EQ(!queue2, 0);
-	ASSERT_EQ(!queue3, 2);
+	queue1 = const_queue1;
+	
+	ASSERT_EQ(queue1.dnumber(), 3);
+	ASSERT_EQ(queue1.dsize(), 5);
+	ASSERT_EQ(queue1.dtail(), 3);
+	ASSERT_EQ(queue1.dhead(), 0);
+	ASSERT_EQ((queue1.darr())[0].double_val, item1.double_val);
+	ASSERT_EQ((queue1.darr())[0].string_val, item1.string_val);
+	ASSERT_EQ((queue1.darr())[1].double_val, item3.double_val);
+	ASSERT_EQ((queue1.darr())[1].string_val, item3.string_val);
+	ASSERT_EQ((queue1.darr())[2].double_val, item5.double_val);
+	ASSERT_EQ((queue1.darr())[2].string_val, item5.string_val);
+	
+	Queue const_queue2(4);
+	const_queue2 << item2;
+	const_queue2 << item4;
+	Queue queue2(7);
+	queue2 = const_queue2;
+	
+	ASSERT_EQ(queue2.dnumber(), 2);
+	ASSERT_EQ(queue2.dsize(), 4);
+	ASSERT_EQ(queue2.dtail(), 2);
+	ASSERT_EQ(queue2.dhead(), 0);
+	ASSERT_EQ((queue2.darr())[0].double_val, item2.double_val);
+	ASSERT_EQ((queue2.darr())[0].string_val, item2.string_val);
+	ASSERT_EQ((queue2.darr())[1].double_val, item4.double_val);
+	ASSERT_EQ((queue2.darr())[1].string_val, item4.string_val);
 }
 
+TEST(my_queue_lib, Test_Queue_006){//оператор перемещение
+	Queue const_queue1(5);
+	const_queue1 << item1;
+	const_queue1 << item3;
+	const_queue1 << item5;
+	Queue queue1;
+	queue1 = move(const_queue1);
+	
+	ASSERT_EQ(queue1.dnumber(), 3);
+	ASSERT_EQ(queue1.dsize(), 5);
+	ASSERT_EQ(queue1.dtail(), 3);
+	ASSERT_EQ(queue1.dhead(), 0);
+	ASSERT_EQ((queue1.darr())[0].double_val, item1.double_val);
+	ASSERT_EQ((queue1.darr())[0].string_val, item1.string_val);
+	ASSERT_EQ((queue1.darr())[1].double_val, item3.double_val);
+	ASSERT_EQ((queue1.darr())[1].string_val, item3.string_val);
+	ASSERT_EQ((queue1.darr())[2].double_val, item5.double_val);
+	ASSERT_EQ((queue1.darr())[2].string_val, item5.string_val);
 
+	ASSERT_EQ(const_queue1.dnumber(), 0);
+	ASSERT_EQ(const_queue1.dsize(), 0);
+	ASSERT_EQ(const_queue1.dtail(), 0);
+	ASSERT_EQ(const_queue1.dhead(), 0);
+	ASSERT_EQ(const_queue1.darr(), nullptr);
+	
+	Queue const_queue2(4);
+	const_queue2 << item2;
+	const_queue2 << item4;
+	Queue queue2(7);
+	queue2 = move(const_queue2);
+	
+	ASSERT_EQ(queue2.dnumber(), 2);
+	ASSERT_EQ(queue2.dsize(), 4);
+	ASSERT_EQ(queue2.dtail(), 2);
+	ASSERT_EQ(queue2.dhead(), 0);
+	ASSERT_EQ((queue2.darr())[0].double_val, item2.double_val);
+	ASSERT_EQ((queue2.darr())[0].string_val, item2.string_val);
+	ASSERT_EQ((queue2.darr())[1].double_val, item4.double_val);
+	ASSERT_EQ((queue2.darr())[1].string_val, item4.string_val);	
 
-
+	ASSERT_EQ(const_queue2.dnumber(), 0);
+	ASSERT_EQ(const_queue2.dsize(), 0);
+	ASSERT_EQ(const_queue2.dtail(), 0);
+	ASSERT_EQ(const_queue2.dhead(), 0);
+	ASSERT_EQ(const_queue2.darr(), nullptr);	
+}
 

@@ -7,19 +7,28 @@ Item::Item(){
 	string_val = "";
 }
 
-Queue::Queue(Item *&queue, int &num, int &len) : size(len), number(num), tail(num),  arr(queue){};
+Queue::Queue(const Item *queue, const int &num, const int &len) : size(len), number(num), tail(num){
+	for(int pos = head; pos < tail; ++pos){
+		arr[pos] = queue[pos];
+	}
+};
 
 Queue::Queue(const Queue & queue):size(queue.size), number(queue.number), head(queue.head), tail(queue.tail), arr(nullptr)
 {
 	if(number){
 		arr = new Item[size];
-		for(int pos = head; pos < tail; pos++){
-			arr[pos] = queue.arr[pos];
+		for(int pos = head; pos % size < tail; pos++){
+			arr[pos] = (queue.arr)[pos];
 		}
 	}
 }
 
-Queue::Queue(Queue &queue){
+Queue::Queue(Queue &&queue):size(queue.size), number(queue.number), head(queue.head), tail(queue.tail), arr(queue.arr){
+	queue.arr = nullptr;
+	queue.number = 0;
+	queue.size = 0;
+	queue.tail = 0;
+	queue.head = 0;
 }
 
 Queue::Queue(int len) : size(len)
@@ -29,15 +38,54 @@ Queue::Queue(int len) : size(len)
 	}
 }
 
-Queue::~Queue(){
-	size = 0;
+Queue &Queue::operator = (Queue &&queue){
+	destroy();
+	size = queue.size;
+	number = queue.number;
+	head = queue.head;
+	tail = queue.tail;
+	arr = queue.arr;
+	queue.arr = nullptr;
+	queue.number = 0;
+	queue.size = 0;
+	queue.tail = 0;
+	queue.head = 0;
+return *this;
+}
+
+Queue &Queue::operator = (const Queue &queue){
+	destroy();
+	size = queue.size;
+	number = queue.number;
+	tail = queue.tail;
+	head = queue.head;
+	arr = new Item[size];
+	for(int pos = head; pos % size < tail; ++pos){
+		arr[pos] = queue.arr[pos];
+	}
+	return *this;
+}
+
+void Queue::destroy(){
 	number = 0;
 	head = 0;
 	tail = 0;
 	if(size){
 		delete [] arr;
-		arr = nullptr;
+		size = 0;
 	}
+	arr = nullptr;
+}
+
+Queue::~Queue(){
+	number = 0;
+	head = 0;
+	tail = 0;
+	if(size){
+		delete [] arr;
+		size = 0;
+	}
+	arr = nullptr;
 }
 
 int Item::operator == (Item &item){
@@ -80,7 +128,7 @@ std::ostream &operator << (std::ostream &ostream, const Item &item){
 	return ostream;
 }
 
-
+/*
 Queue &Queue::operator = (const Queue  &queue){
 	if(this != &queue){
 		size = queue.size;
@@ -88,6 +136,7 @@ Queue &Queue::operator = (const Queue  &queue){
 		head = queue.head;
 		tail = queue.tail;
 		delete [] arr;
+		arr = new Item[size];
 		if(number){
 			for(int pos = head; pos % size < tail; ++pos){
 				arr[pos] = queue.arr[pos];
@@ -95,7 +144,20 @@ Queue &Queue::operator = (const Queue  &queue){
 		}
 	}
 	return *this;
-}	
+}
+*/
+int Queue::operator == (const Queue &queue){
+	if(size != queue.size or head != queue.head or tail != queue.tail or number != queue.number){
+		return 0;
+	}
+	for(int pos = head; pos < tail; ++pos){
+		if(arr[pos].double_val != queue.arr[pos].double_val or arr[pos].string_val != queue.arr[pos].string_val){
+			return 0;
+		}
+	}
+	return 1;
+
+}
 
 
 int Queue::operator >> (Item &item){

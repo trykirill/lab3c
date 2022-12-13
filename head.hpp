@@ -11,9 +11,10 @@ struct Item{
 	double double_val;
 	std::string string_val;
 
-	Item();
+	Item();//инициализирующий конструктор
 	Item(double val_double, std::string val_string) : double_val(val_double), string_val(val_string) {};
 		
+
 	int operator == (Item &item);
 
 	struct Item operator >> (double &val);
@@ -35,19 +36,29 @@ private:
 	int tail = 0;
 	Item *arr = nullptr;
 public:
-	Queue(Item *queue, int num, int len);
-	Queue(const Queue &queue);
-	Queue(Queue &queue);
+	Queue(const Item *queue, const int &num, const int &len);
+	Queue(const Queue &queue);//конструктор присваивания
+	Queue(Queue &&queue);//конструктор перемищения
 	Queue(int len);
-	Queue();
+	Queue(){}
 
 	int operator !();
 	int operator >> (Item &item);
 	int operator << (Item &item);
 	friend std::ostream &operator << (std::ostream &ostream, const Queue &queue);
-	Queue & operator = (const Queue &queue);
-
+	Queue & operator = (const Queue &queue);//операор присваивания
+	Queue & operator = (Queue && queue);//оператор перемещения
+	
+	//деструкторы
+	void destroy();
 	~Queue();
+	int dsize(){return size;}
+	int dnumber(){return number;}
+	int dtail(){return tail;}
+	int dhead(){return head;}
+	Item *darr(){return arr;}
+	int operator == (const Queue &queue);
+
 };
 
 int processing(Queue &my_queue);

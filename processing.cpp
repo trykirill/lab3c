@@ -8,8 +8,7 @@ int processing(Queue &my_queue){
 	do{
 	std::cout << "[0] вставить в очередь\n"
 		<< "[1]  удалить из очереди\n"
-		<< "[2]  вывести очередь\n"
-		<< "[3] переобозначить очередь\n";
+		<< "[2]  вывести очередь\n";
 	getInt(mode, "enter mode -> ");
 	if(mode == 0){
 		std::cin >> val;
@@ -22,20 +21,6 @@ int processing(Queue &my_queue){
 	}
 	else if(mode == 2){
 		std::cout << my_queue;
-	}
-	else if(mode == 3){
-		int len, number;
-		getInt(len, "enter size of queue");
-		Item *queue = new Item[len];
-		getInt(number, "enter number of items -> ");
-		std::cin >> number;
-		Item item;
-		for(int pos = 0; pos < number; ++pos){
-			std::cout << "item " << pos << ":\n";
-			std::cin >> item;
-			queue[pos] = item;
-		}
-		my_queue(queue, number, len);
 	}
 	}while(mode != -1);
 	return 0;
